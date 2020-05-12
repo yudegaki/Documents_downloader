@@ -1,3 +1,12 @@
+'''
+[Documents Downloader]
+
+Copyright (c) 2020 yudegaki
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+'''
+
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python3
 import time,os,urllib.parse,glob,shutil,sys

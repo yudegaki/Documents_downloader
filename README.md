@@ -2,6 +2,8 @@
 このプログラムは**工学院大学**の学生向けに作られています.
 CoursePowerから自動で教材をダウンロードします.
 # 前提
+This software is released under the MIT License, see LICENSE.txt.
+
 本プロジェクトは[poetry](https://cocoatomo.github.io/poetry-ja/)でPythonのパッケージ管理をしています.
 よくわからない人や環境を汚しても良い人は`python3 -m pip install selenium`を実行してください.
 
