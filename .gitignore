@@ -1,0 +1,5 @@
+#chromedriverを除外
+/downloader/chromedriver
+#secure_login.pyを除外
+/downloader/secure_login.py
+/downloader/__pycache__
