@@ -2,4 +2,4 @@
 /downloader/chromedriver
 #secure_login.pyを除外
 /downloader/secure_login.py
-/downloader/__pycache__
+/downloader/__pycache__/
