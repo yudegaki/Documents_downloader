@@ -38,19 +38,18 @@ def chrome_login(driver):
     login_passwd = S.g_login_passwd
     login_id = student_id + '@g.kogakuin.jp'
 
-    #最大待機時間（秒）
-    wait_time = 30
     ### IDを入力
     login_id_xpath = '//*[@id="identifierNext"]'
     # xpathの要素が見つかるまで待機
+    wait_time = 15
     WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, login_id_xpath)))
     driver.find_element_by_name("identifier").send_keys(login_id)
     driver.find_element_by_xpath(login_id_xpath).click()
     ### パスワードを入力
-    login_pw_xpath = '//*[@id="passwordNext"]'
-    WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, login_pw_xpath)))
+    login_passwd_xpath = '//*[@id="passwordNext"]'
+    WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, login_passwd_xpath)))
     driver.find_element_by_name("password").send_keys(login_passwd)
-    driver.find_element_by_xpath(login_pw_xpath).click()
+    driver.find_element_by_xpath(login_passwd_xpath).click()
     return
 
 def login_CoursePower(driver):
