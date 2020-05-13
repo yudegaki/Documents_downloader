@@ -31,7 +31,7 @@ def load_config():
         sys.exit(1)
 
 def chrome_init():
-    driver_path = S['chromedriver_dir_pass']
+    driver_path = S['chromedriver_dir_path']
     options = Options()
     #複数ダウンロードを許可
     prefs = {'profile.default_content_setting_values.automatic_downloads': 1}
@@ -43,7 +43,7 @@ def chrome_init():
     url = 'https://google.com/accounts?hl=ja-JP'
     driver.get(url)
 
-    download_path = S['dl_dir_pass']
+    download_path = S['dl_dir_path']
     #仮の空ファイルを作成
     with open(download_path + 'new_tmp.txt','w') as f:
         f.write('')
@@ -84,7 +84,7 @@ def login_CoursePower(driver):
     return
 
 def make_dir(dir_name):
-    path = S['target_dir_pass + dir_name']
+    path = S['target_dir_path'] + dir_name
     os.makedirs(path,exist_ok = True)
     return path
 
@@ -112,7 +112,7 @@ def is_complete(dir_name,cnt):
         return False
 
 def wait_download(dir_name,driver):
-    download_path = S['dl_dir_pass']
+    download_path = S['dl_dir_path']
     cnt = 0
     while is_complete(download_path,cnt):
         cnt += 1
@@ -253,7 +253,7 @@ def get_lectures(driver):
         driver.back()   
     
     #作成した仮ファイルを削除
-    download_path = S['dl_dir_pass ']
+    download_path = S['dl_dir_path']
     os.remove(download_path + 'new_tmp.txt')
 
     #ログアウト処理
