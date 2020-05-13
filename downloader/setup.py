@@ -6,9 +6,9 @@ conf = {
     'student_id': '',
     'g_login_passwd': '',
     'c_login_passwd': '',
-    'dl_dir_pass': '',
-    'target_dir_pass': '',
-    'chromedriver_dir_pass': ''
+    'dl_dir_path': '',
+    'target_dir_path': '',
+    'chromedriver_dir_path': ''
 }
 
 def make_setup():
@@ -22,13 +22,13 @@ def make_setup():
     conf['c_login_passwd'] = input()
 
     print('デフォルトのダウンロードディレクトリの絶対パスを入力してください ex)/home/tmp/Downloads/>')
-    conf['dl_dir_pass'] = input()
+    conf['dl_dir_path'] = input()
 
     print('ダウンロードした教材を保存したいディレクトリの絶対パスを入力してください ex)/home/tmp/escape/>')
-    conf['target_dir_pass'] = input()
+    conf['target_dir_path'] = input()
 
     print('chrome driverを置いたディレクトリのパスを入力してください ex)./chromedriver >\n注)Windowsを使っている方は拡張子.exeを付けてください. chromedriverはmain.pyと同じフォルダに配置してください')
-    conf['chromedriver_dir_pass'] = input()
+    conf['chromedriver_dir_path'] = input()
 
     with open(path,mode = 'w') as f:
         json.dump(conf,f,indent = 4)
