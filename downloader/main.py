@@ -9,7 +9,7 @@ http://opensource.org/licenses/mit-license.php
 
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python3
-import time,os,urllib.parse,glob,shutil,sys
+import time,os,urllib.parse,glob,shutil,sys,json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.alert import Alert
@@ -18,10 +18,20 @@ from selenium.webdriver.support.ui import Select,WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-import secure_login as S
+S = {}
+
+def load_config():
+    global S
+    path = './secure_login.json'
+    try:
+        with open(path,mode = 'r') as f:
+            S = json.load(f)
+    except FileNotFoundError:
+        print("E: ./secure_login.json not found.")
+        sys.exit(1)
 
 def chrome_init():
-    driver_path = S.chromedriver_dir_pass
+    driver_path = S['chromedriver_dir_pass']
     options = Options()
     #複数ダウンロードを許可
     prefs = {'profile.default_content_setting_values.automatic_downloads': 1}
@@ -33,7 +43,7 @@ def chrome_init():
     url = 'https://google.com/accounts?hl=ja-JP'
     driver.get(url)
 
-    download_path = S.dl_dir_pass
+    download_path = S['dl_dir_pass']
     #仮の空ファイルを作成
     with open(download_path + 'new_tmp.txt','w') as f:
         f.write('')
@@ -42,9 +52,9 @@ def chrome_init():
 
 def chrome_login(driver):
     #学籍番号
-    student_id = S.student_id
+    student_id = S['student_id']
     #パスワード
-    login_passwd = S.g_login_passwd
+    login_passwd = S['g_login_passwd']
     login_id = student_id + '@g.kogakuin.jp'
 
     ### IDを入力
@@ -62,8 +72,8 @@ def chrome_login(driver):
     return
 
 def login_CoursePower(driver):
-    student_id = S.student_id
-    login_passwd = S.c_login_passwd
+    student_id = S['student_id']
+    login_passwd = S['c_login_passwd']
 
     url = 'https://study.ns.kogakuin.ac.jp/'
     driver.get(url)
@@ -74,7 +84,7 @@ def login_CoursePower(driver):
     return
 
 def make_dir(dir_name):
-    path = S.target_dir_pass + dir_name
+    path = S['target_dir_pass + dir_name']
     os.makedirs(path,exist_ok = True)
     return path
 
@@ -102,7 +112,7 @@ def is_complete(dir_name,cnt):
         return False
 
 def wait_download(dir_name,driver):
-    download_path = S.dl_dir_pass
+    download_path = S['dl_dir_pass']
     cnt = 0
     while is_complete(download_path,cnt):
         cnt += 1
@@ -243,7 +253,7 @@ def get_lectures(driver):
         driver.back()   
     
     #作成した仮ファイルを削除
-    download_path = S.dl_dir_pass 
+    download_path = S['dl_dir_pass ']
     os.remove(download_path + 'new_tmp.txt')
 
     #ログアウト処理
@@ -253,6 +263,7 @@ def get_lectures(driver):
     driver.close()
 
 if __name__ == '__main__':
+    load_config()
     driver = chrome_init()
     chrome_login(driver)
     login_CoursePower(driver)

@@ -1,39 +1,39 @@
-import os,sys
+import os,sys,json
 
-path = './secure_login.py'
+path = './secure_login.json'
+
+conf = {
+    'student_id': '',
+    'g_login_passwd': '',
+    'c_login_passwd': '',
+    'dl_dir_pass': '',
+    'target_dir_pass': '',
+    'chromedriver_dir_pass': ''
+}
 
 def make_setup():
     print('学籍番号を入力してください ex)j012345 >')
-    s = input()
-    s = "student_id = '" + s + "'\n"
-    with open(path,mode = 'w') as f:
-        f.write(s)
+    conf['student_id'] = input()
+
     print('G Suiteアカウントのパスワードを入力してください >')
-    s = input()
-    s = "g_login_passwd = '" + s + "'\n"
-    with open(path,mode = 'a') as f:
-        f.write(s)
+    conf['g_login_passwd'] = input()
+
     print('Course Powerアカウントのパスワードを入力してください >')
-    s = input()
-    s = "c_login_passwd = '" + s + "'\n"
-    with open(path,mode = 'a') as f:
-        f.write(s)
+    conf['c_login_passwd'] = input()
+
     print('デフォルトのダウンロードディレクトリの絶対パスを入力してください ex)/home/tmp/Downloads/>')
-    s = input()
-    s = "dl_dir_pass = '" + s + "'\n"
-    with open(path,mode = 'a') as f:
-        f.write(s)
+    conf['dl_dir_pass'] = input()
+
     print('ダウンロードした教材を保存したいディレクトリの絶対パスを入力してください ex)/home/tmp/escape/>')
-    s = input()
-    s = "target_dir_pass = '" + s + "'\n"
-    with open(path,mode = 'a') as f:
-        f.write(s)
+    conf['target_dir_pass'] = input()
+
     print('chrome driverを置いたディレクトリのパスを入力してください ex)./chromedriver >\n注)Windowsを使っている方は拡張子.exeを付けてください. chromedriverはmain.pyと同じフォルダに配置してください')
-    s = input()
-    s = "chromedriver_dir_pass = '" + s + "'\n"
-    with open(path,mode = 'a') as f:
-        f.write(s)
-    print('先程入力した内容はsecure_login.pyに保存されています.内容を変更したい場合はもう一度setup.pyを実行するか,secure.pyを編集してください.')
+    conf['chromedriver_dir_pass'] = input()
+
+    with open(path,mode = 'w') as f:
+        json.dump(conf,f,indent = 4)
+
+    print('先程入力した内容はsecure_login.jsonに保存されています.内容を変更したい場合はもう一度setup.pyを実行するか,secure_login.jsonを編集してください.')
 
 def setup_init():
     if os.path.exists(path):
