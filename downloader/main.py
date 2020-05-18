@@ -160,7 +160,6 @@ def download_lecture_document(lecture_name,link,driver):
                 dl_links.append('javascript:' + l.get_attribute('onclick'))
         for l in img_list:
             img_lists.append(l.get_attribute('alt'))
-        print(len(dl_links),len(img_lists))
         
         for j in range(min(len(img_lists),len(dl_links))):
             if img_lists[j] != '資料':
