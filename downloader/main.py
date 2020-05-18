@@ -1,5 +1,5 @@
 '''
-[Documents Downloader]
+Documents Downloader
 
 Copyright (c) 2020 yudegaki
 
