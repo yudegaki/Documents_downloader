@@ -96,7 +96,8 @@ def get_latest_filename(dir_name):
 
 def is_complete(dir_name,cnt):
     #最新ファイル名が'new_tmp.txt'or'*.crdownload'の場合ダウンロードが完了していない!!
-    s = get_latest_filename(dir_name) 
+    s = get_latest_filename(dir_name)
+    print('latest file is ' + s)
     if s == dir_name + 'new_tmp.txt':
         if cnt < 100:
             return True
@@ -119,12 +120,16 @@ def wait_download(dir_name,driver):
         time.sleep(0.5)
     move_target = get_latest_filename(download_path)
     #フォルダを移動
-    if os.path.exists(dir_name + move_target[move_target.rfind('/') + 1:]):
-        os.remove(download_path + move_target[move_target.rfind('/') + 1:])
+    find_pos = move_target.rfind('/') + 1
+    #Windowsの場合/でファイル名を取得できないため,場合分けする
+    if find_pos == 0:
+        find_pos = move_target.rfind('\\') + 1
+    if os.path.exists(dir_name + move_target[find_pos:]):
+        os.remove(download_path + move_target[find_pos:])
         print("This file already exists")
     else :
         shutil.move(move_target,dir_name)
-        print("Moved to " + dir_name + move_target[move_target.rfind('/') + 1:] + " !!")
+        print("Moved to " + dir_name + move_target[find_pos:] + " !!")
     return
 
 def mark_as_referenced(is_visit,driver):
@@ -203,6 +208,7 @@ def download_lecture_document(lecture_name,link,driver):
                         handle_arr = driver.window_handles
 
                         driver.switch_to.window(handle_arr[1])
+                        time.sleep(1)
                         #google driveのダウンロードリストを取得
                         target_elem = driver.find_elements_by_class_name("WYuW0e")
                         # Perform double-click action on the element
@@ -245,8 +251,8 @@ def get_lectures(driver):
             val = elem[i].find_element_by_tag_name('a').get_attribute('onclick')
             lectures.append(s[2])
             lecture_links.append(val)
-
-    for i in range(len(lectures)):
+    #途中でエラーが発生した場合このrangeを変更してダウンロードを省略してみてください
+    for i in range(11,len(lectures)):
         link = 'javascript:' +  lecture_links[i]
         download_lecture_document(lectures[i],link,driver)
         driver.back()   
@@ -260,6 +266,8 @@ def get_lectures(driver):
     logout_target.click()
     Alert(driver).accept()
     driver.close()
+    
+    print('Downloads completed')
 
 if __name__ == '__main__':
     load_config()
