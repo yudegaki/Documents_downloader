@@ -107,6 +107,8 @@ def is_complete(dir_name,cnt):
             sys.exit(1)
             #一応書いておく
             return False
+    elif len(s) >= 4 and s[-4:] == '.tmp':
+        return True
     elif len(s) >= 11 and s[-11:] == '.crdownload':
         return True
     else:
@@ -208,9 +210,9 @@ def download_lecture_document(lecture_name,link,driver):
                         handle_arr = driver.window_handles
 
                         driver.switch_to.window(handle_arr[1])
-                        time.sleep(1)
                         #google driveのダウンロードリストを取得
                         target_elem = driver.find_elements_by_class_name("WYuW0e")
+                        time.sleep(1)
                         # Perform double-click action on the element
                         webdriver.ActionChains(driver).double_click(target_elem[0]).perform()
                                             
