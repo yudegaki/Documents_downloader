@@ -21,13 +21,13 @@ def make_setup():
     print('Course Powerアカウントのパスワードを入力してください >')
     conf['c_login_passwd'] = input()
 
-    print('デフォルトのダウンロードディレクトリの絶対パスを入力してください ex)/home/tmp/Downloads/>')
+    print('デフォルトのダウンロードディレクトリの絶対パスを入力してください ex-linux-ver)/home/tmp/Downloads/ ex-windows-ver)C:\\\\Users\\\\hoge\\\\Downloads\\\\ >')
     conf['dl_dir_path'] = input()
 
-    print('ダウンロードした教材を保存したいディレクトリの絶対パスを入力してください ex)/home/tmp/escape/>')
+    print('ダウンロードした教材を保存したいディレクトリの絶対パスを入力してください ex-linux-ver)/home/tmp/escape/ ex-windows-ver)C:\\\\Users\\\\hoge\\\\Documents\\\\escape\\\\ >')
     conf['target_dir_path'] = input()
 
-    print('chrome driverを置いたディレクトリのパスを入力してください ex)./chromedriver >\n注)Windowsを使っている方は拡張子.exeを付けてください. chromedriverはmain.pyと同じフォルダに配置してください')
+    print('chrome driverを置いたディレクトリのパスを入力してください ex-linux-ver)./chromedriver ex-windows-ver).\\\\chromedriver.exe >\n注)chromedriverはmain.pyと同じフォルダに配置してください')
     conf['chromedriver_dir_path'] = input()
 
     with open(path,mode = 'w') as f:
