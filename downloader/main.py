@@ -252,7 +252,7 @@ def get_lectures(driver):
             lectures.append(s[2])
             lecture_links.append(val)
     #途中でエラーが発生した場合このrangeを変更してダウンロードを省略してみてください
-    for i in range(11,len(lectures)):
+    for i in range(len(lectures)):
         link = 'javascript:' +  lecture_links[i]
         download_lecture_document(lectures[i],link,driver)
         driver.back()   
