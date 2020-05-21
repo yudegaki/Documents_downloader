@@ -154,8 +154,11 @@ def download_lecture_document(lecture_name,link,driver):
     for i in range(len(document_list)):
         title_list = driver.find_elements_by_class_name('courseFolderName')
         document_list = driver.find_elements_by_class_name('kyozaiHidden')
+        #フォルダ名に指定できない文字を消す
+        lecture_name = re.sub('[\\/:*?"<>|]','',lecture_name)
+        title_list_text = re.sub('[\\/:*?"<>|]','',title_list[i].text)
 
-        save_dir = make_dir(lecture_name + '/' + title_list[i].text + '/')
+        save_dir = make_dir(lecture_name + '/' + title_list_text + '/')
 
         link_list = document_list[i].find_elements_by_tag_name('a')
         img_list = document_list[i].find_elements_by_tag_name('img')
@@ -163,8 +166,11 @@ def download_lecture_document(lecture_name,link,driver):
         img_lists = []
 
         for l in link_list:
-            if l.get_attribute('onclick')[0] == 'k':
-                dl_links.append('javascript:' + l.get_attribute('onclick'))
+            l_attr = l.get_attribute('onclick')
+            if type(l_attr) is None:
+                continue
+            if l_attr[0] == 'k':
+                dl_links.append('javascript:' + l_attr)
         for l in img_list:
             img_lists.append(l.get_attribute('alt'))
         
