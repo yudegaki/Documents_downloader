@@ -1,7 +1,7 @@
 import os,sys,json
 
-path = './secure_login.json'
-
+path_s = './secure_login.json'
+path_c = './check_duplication.json'
 conf = {
     'student_id': '',
     'g_login_passwd': '',
@@ -30,13 +30,17 @@ def make_setup():
     print('chrome driverを置いたディレクトリのパスを入力してください ex-linux-ver)./chromedriver ex-windows-ver).\\\\chromedriver.exe >\n注)chromedriverはmain.pyと同じフォルダに配置してください')
     conf['chromedriver_dir_path'] = input()
 
-    with open(path,mode = 'w') as f:
+    with open(path_s,mode = 'w') as f:
         json.dump(conf,f,indent = 4)
 
     print('先程入力した内容はsecure_login.jsonに保存されています.内容を変更したい場合はもう一度setup.pyを実行するか,secure_login.jsonを編集してください.')
 
 def setup_init():
-    if os.path.exists(path):
+    if not(os.path.exists(path_c)):
+        tmp = {}
+        with open(path_c,mode = 'w') as f:
+            json.dump(tmp,f,indent = 4)
+    if os.path.exists(path_s):
         print('設定ファイルは既に存在します.新たな設定ファイルを作成しますか? y:n >')
         s = input()
         while not (s == 'y' or s == 'n'):
