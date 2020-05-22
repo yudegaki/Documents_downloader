@@ -9,7 +9,7 @@ http://opensource.org/licenses/mit-license.php
 
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python3
-import time,os,urllib.parse,glob,shutil,sys,json
+import time,os,urllib.parse,glob,shutil,sys,json,re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.alert import Alert
@@ -18,17 +18,29 @@ from selenium.webdriver.support.ui import Select,WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-S = {}
+S = C = {}
 
 def load_config():
-    global S
-    path = './secure_login.json'
+    global S,C
+    path_s = './secure_login.json'
+    path_c = './check_duplication.json'
     try:
-        with open(path,mode = 'r') as f:
+        with open(path_s,mode = 'r') as f:
             S = json.load(f)
     except FileNotFoundError:
         print("E: ./secure_login.json not found.")
         sys.exit(1)
+    try:
+        with open(path_c,mode = 'r') as f:
+            C = json.load(f)
+    except FileNotFoundError:
+        print("E: ./check_duplication.json not found.")
+        sys.exit(1)
+
+def save_config():
+    path_c = './check_duplication.json'
+    with open(path_c,'w') as f:
+        json.dump(C,f,indent = 4)
 
 def chrome_init():
     driver_path = S['chromedriver_dir_path']
@@ -69,7 +81,6 @@ def chrome_login(driver):
     WebDriverWait(driver, wait_time).until(EC.presence_of_element_located((By.XPATH, login_passwd_xpath)))
     driver.find_element_by_name("password").send_keys(login_passwd)
     driver.find_element_by_xpath(login_passwd_xpath).click()
-    return
 
 def login_CoursePower(driver):
     student_id = S['student_id']
@@ -81,7 +92,6 @@ def login_CoursePower(driver):
     driver.find_element_by_name("userId").send_keys(student_id)
     driver.find_element_by_name("password").send_keys(login_passwd)
     driver.find_element_by_name("loginButton").click()
-    return
 
 def make_dir(dir_name):
     path = S['target_dir_path'] + dir_name
@@ -115,11 +125,13 @@ def is_complete(dir_name,cnt):
         return False
 
 def wait_download(dir_name,driver):
+
     download_path = S['dl_dir_path']
     cnt = 0
     while is_complete(download_path,cnt):
         cnt += 1
-        time.sleep(0.5)
+        time.sleep(5)
+
     move_target = get_latest_filename(download_path)
     #フォルダを移動
     find_pos = move_target.rfind('/') + 1
@@ -129,10 +141,10 @@ def wait_download(dir_name,driver):
     if os.path.exists(dir_name + move_target[find_pos:]):
         os.remove(download_path + move_target[find_pos:])
         print("This file already exists")
-    else :
+    elif not(move_target[find_pos:] == 'new_tmp.txt'):
         shutil.move(move_target,dir_name)
         print("Moved to " + dir_name + move_target[find_pos:] + " !!")
-    return
+
 
 def mark_as_referenced(is_visit,driver):
     #参照済みにする
@@ -144,9 +156,9 @@ def mark_as_referenced(is_visit,driver):
     driver.switch_to.window(handle_arr[1])
     driver.close()
     driver.switch_to.window(handle_arr[0])
-    return
 
 def download_lecture_document(lecture_name,link,driver):
+    global C
     driver.execute_script(link)
     title_list = driver.find_elements_by_class_name('courseFolderName')
     document_list = driver.find_elements_by_class_name('kyozaiHidden')
@@ -181,14 +193,22 @@ def download_lecture_document(lecture_name,link,driver):
             
             save_link = driver.find_element_by_class_name('courseTable3').find_elements_by_tag_name('a')
             save_links = []
+            flag_dupl = False
             for sl in save_link:
                 if sl.get_attribute('href') == 'javascript:void(0);':
                     save_links.append(sl.get_attribute('onclick'))
             for rop in range(len(save_links)):  
                 #Google Driveからのダウンロードかそうでないかで処理を分ける
+                tmp_link = save_links[rop]
+
                 if save_links[rop][0] == 'd':
+                    if save_links[rop] in C:
+                        continue
                     driver.execute_script(save_links[rop])
                     wait_download(save_dir,driver)
+                    C[save_links[rop]] = True
+                    save_config()
+
                 elif save_links[rop][0] == 'o':
                     is_visit = save_links[rop]
                     slice_st = save_links[rop].find('http')
@@ -196,10 +216,11 @@ def download_lecture_document(lecture_name,link,driver):
                     save_links[rop] = save_links[rop][slice_st:slice_ed]
                     #urlデコード
                     save_links[rop] = urllib.parse.unquote(save_links[rop])
+
+                    if save_links[rop] in C:
+                        continue
                     
                     if save_links[rop][:30] == 'https://drive.google.com/file/'or save_links[rop][:30] == 'https://drive.google.com/open?':
-                        #参照済みにする
-                        mark_as_referenced(is_visit,driver)
                         #ダウンロード
                         driver.get(save_links[rop])
                         elem_xpath = "//div[contains(@aria-label,'ダウンロード')]"
@@ -207,6 +228,7 @@ def download_lecture_document(lecture_name,link,driver):
                         time.sleep(1)
                         target_elem.click()
                         wait_download(save_dir,driver)
+                            
                         driver.back()
                     elif save_links[rop][:25] == 'https://drive.google.com/':
 
@@ -223,17 +245,19 @@ def download_lecture_document(lecture_name,link,driver):
                         webdriver.ActionChains(driver).double_click(target_elem[0]).perform()
                                             
                         for k in range(len(target_elem)):
-
+                            time.sleep(1)
                             elem_xpath = "//div[contains(@aria-label,'ダウンロード')]"
                             tg_elem = driver.find_element_by_xpath(elem_xpath)
-                            time.sleep(1)
                             tg_elem.click()
+                            time.sleep(1)
                             wait_download(save_dir,driver)
+
                             if k != len(target_elem)-1:
                                 exit_xpath = "//div[contains(@aria-label,'次へ')]"
                                 exit_elem = driver.find_element_by_xpath(exit_xpath)
                                 exit_elem.click()
                             
+                        
                         #画面を閉じ,元のタブにハンドルを戻す
                         driver.close()
                         driver.switch_to.window(handle_arr[0]) 
@@ -241,6 +265,8 @@ def download_lecture_document(lecture_name,link,driver):
                         #参照済みにする
                         mark_as_referenced(is_visit,driver)
 
+                    C[save_links[rop]] = True
+                    save_config()
 
             driver.back()
     
