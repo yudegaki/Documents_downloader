@@ -152,7 +152,7 @@ def mark_as_referenced(is_visit,driver):
     is_visit_elem = driver.find_element_by_xpath(is_visit_xpath)
     is_visit_elem.click()
     handle_arr = driver.window_handles
-
+    time.sleep(1)
     driver.switch_to.window(handle_arr[1])
     driver.close()
     driver.switch_to.window(handle_arr[0])
@@ -221,6 +221,8 @@ def download_lecture_document(lecture_name,link,driver):
                         continue
                     
                     if save_links[rop][:30] == 'https://drive.google.com/file/'or save_links[rop][:30] == 'https://drive.google.com/open?':
+                        #参照済みにする
+                        mark_as_referenced(is_visit,driver)
                         #ダウンロード
                         driver.get(save_links[rop])
                         elem_xpath = "//div[contains(@aria-label,'ダウンロード')]"
