@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os,sys,json
 
 path_s = './secure_login.json'
@@ -47,7 +48,7 @@ def setup_init():
             print('Please input only y or n >')
             s = input()
         if s == 'y':
-            os.remove(path)
+            os.remove(path_s)
             return True
         else:
             return False
