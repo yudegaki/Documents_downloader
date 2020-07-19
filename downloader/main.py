@@ -181,6 +181,8 @@ def download_lecture_document(lecture_name,link,driver):
             l_attr = l.get_attribute('onclick')
             if type(l_attr) is None:
                 continue
+            if l_attr is None:
+                continue
             if l_attr[0] == 'k':
                 dl_links.append('javascript:' + l_attr)
         for l in img_list:
