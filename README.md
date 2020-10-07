@@ -13,7 +13,7 @@ This software is released under the MIT License, see LICENSE.txt.
 3. `setup.py`を実行し,ガイドに従って入力してください.
 
 # 実行
-* poetryを使っている方は`poetry run python3 main.py`を,それ以外の方は`python3 main.py`を実行すると自動的に教材をダウンロードします。
+* poetryを使っている方は`poetry run python3 main.py`を,それ以外の方は`python3 main.py`を実行すると自動的に教材をダウンロードします.
 
 # 注意事項
 * このプログラムを実行したことによって生じた如何なる他の損害に対して,作者は一切その責任を負いません.自己責任で実行してください.
